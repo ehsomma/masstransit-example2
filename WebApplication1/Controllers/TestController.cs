@@ -1,3 +1,4 @@
+using System.Reflection;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Events;
@@ -23,13 +24,16 @@ namespace WebApplication1.Controllers
             person.Events.Add(new PersonCreated() { Id = person.Id });
             person.Events.Add(new PersonPositionCreated() { Position = person.Position });
 
+
             foreach (IDomainEvent personEvent in person.Events)
             {
-                _bus.Publish(personEvent);
+                // SOLVED: Source: https://stackoverflow.com/questions/75462566/how-to-publish-a-specific-event-from-an-implemented-interface/75466972#75466972
+                //_bus.Publish(personEvent);
+                _bus.Publish((object)personEvent);
             }
 
             // Of course this two lines works!
-            //_bus.Publish<PersonCreated>(new PersonCreated() { Id = 1 });
+            //_bus.Publish(new PersonCreated() { Id = 1 });
             //_bus.Publish<PersonPositionCreated>(new PersonPositionCreated() { Position  = "Developer" });
 
 
